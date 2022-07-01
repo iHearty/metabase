@@ -187,6 +187,7 @@
                 {:aggregation [[:aggregation-options
                                 [:count]
                                 {:name               "count"
+                                 ::add/source-alias  "count"
                                  ::add/desired-alias "count"
                                  ::add/position      0}]]
                  :filter      [:!=
@@ -211,16 +212,19 @@
                                 :aggregation  [[:aggregation-options
                                                 [:count]
                                                 {:name               "count"
+                                                 ::add/source-alias  "count"
                                                  ::add/desired-alias "count"
                                                  ::add/position      0}]
                                                [:aggregation-options
                                                 [:count]
                                                 {:name               "count_2"
+                                                 ::add/source-alias  "count_2"
                                                  ::add/desired-alias "count_2"
                                                  ::add/position      1}]
                                                [:aggregation-options
                                                 [:count]
                                                 {:name               "count_3"
+                                                 ::add/source-alias  "count_3"
                                                  ::add/desired-alias "count_3"
                                                  ::add/position      2}]]}
                  :fields       [[:field "count" {:base-type          :type/BigInteger
@@ -305,6 +309,7 @@
                                                               [:avg [:field %reviews.rating {::add/source-table $$reviews
                                                                                              ::add/source-alias "RATING"}]]
                                                               {:name               "avg"
+                                                               ::add/source-alias  "avg"
                                                                ::add/desired-alias "avg"
                                                                ::add/position      1}]]
                                               :breakout     [[:field %products.category {:join-alias         "P2"
@@ -399,6 +404,7 @@
                                                ::add/position      0}]]
                             {:aggregation [[:aggregation-options [:count] {:name               "COOL.count"
                                                                            ::add/position      1
+                                                                           ::add/source-alias  "count"
                                                                            ::add/desired-alias "COOL.count"}]]
                              :breakout    [double-price]
                              :order-by    [[:asc double-price]]})))
@@ -555,6 +561,7 @@
                                                           ::add/source-alias "USER_ID"}]]
                                   {:name               "sum"
                                    ::add/position      0
+                                   ::add/source-alias  "sum"
                                    ::add/desired-alias "sum"}]]
                    :order-by    [[:asc [:aggregation 0 {::add/desired-alias "sum"
                                                         ::add/position      0}]]]})
@@ -569,6 +576,7 @@
                  :breakout    [[:expression "count" {::add/desired-alias "count"
                                                      ::add/position      0}]]
                  :aggregation [[:aggregation-options [:count] {:name               "count_2"
+                                                               ::add/source-alias  "count"
                                                                ::add/desired-alias "count_2"
                                                                ::add/position      1}]]
                  :order-by    [[:asc [:expression "count" {::add/desired-alias "count"
