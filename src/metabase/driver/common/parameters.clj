@@ -49,9 +49,9 @@
 ;;
 ;; `snippet-id` is the integer ID of the row in the application DB from where the snippet content is loaded.
 ;;
-;; `parsed-query` is an array resulted from paring the raw content of
+;; `parsed-query` is an array we got from parsing the raw query of the snippet
 ;;
-;; `param->value` is a map of parameter that are found inside snippet to its value.
+;; `param->value` is a map with keys are template-tag that found in the raw query
 (p.types/defrecord+ ParsedQuerySnippet [snippet-id parsed-query param->value]
   pretty/PrettyPrintable
   (pretty [this]

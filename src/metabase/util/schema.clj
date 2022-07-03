@@ -368,7 +368,7 @@
       TemplateTagSchema
       (fn [m]
         (every? (fn [[tag-name tag-definition]]
-                  (core/= tag-name (:name tag-definition)))
+                  (= (name tag-name) (:name tag-definition)))
                 m))
       "keys in template tag map must match the :name of their values")
    (deferred-tru "template tags must be a map with key of name->TemplateTag.")))

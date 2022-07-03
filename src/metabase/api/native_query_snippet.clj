@@ -42,7 +42,8 @@
   {content       s/Str
    description   (s/maybe s/Str)
    name          native-query-snippet/NativeQuerySnippetName
-   collection_id (s/maybe su/IntGreaterThanZero)}
+   collection_id (s/maybe su/IntGreaterThanZero)
+   template_tags (s/maybe su/TemplateTags)}
   (check-snippet-name-is-unique name)
   (let [snippet {:content       content
                  :creator_id    api/*current-user-id*
@@ -77,7 +78,7 @@
    description   (s/maybe s/Str)
    name          (s/maybe native-query-snippet/NativeQuerySnippetName)
    collection_id (s/maybe su/IntGreaterThanZero)
-   template_tags (s/maybe su/Map)}
+   template_tags (s/maybe su/TemplateTags)}
   (check-perms-and-update-snippet! id body))
 
 (api/define-routes)

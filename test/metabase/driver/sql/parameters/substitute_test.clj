@@ -188,7 +188,7 @@
                                                                                        :parsed-query ["symbol = 'A'"]
                                                                                        :param->value {}})})))))
 
-  (testing "Native query snippet substitution without param"
+  (testing "Native query snippet substitution with param"
     (testing "snippet contains one raw param"
      (let [query ["SELECT * FROM test_scores WHERE " (param "snippet:symbol_is_A")]]
        (is (= ["SELECT * FROM test_scores WHERE symbol = ?" ["A"]]
@@ -196,7 +196,7 @@
                                                                                         :parsed-query ["symbol = " (param "symbol")]
                                                                                         :param->value {"symbol" "A"}})})))))
 
-    (testing "snippet contains one field filter and one raw value param"
+    (testing "snippet contains contains multiple params"
       (let [query                ["SELECT * FROM test_scores WHERE " (param "snippet:symbol_is_A")]
             snippet-param->value {"symbol" "A"
                                   "name"   (params/map->FieldFilter

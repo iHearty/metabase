@@ -174,9 +174,10 @@
                                         :tag          tag
                                         :type         qp.error-type/invalid-parameter})))]
     (params/map->ParsedQuerySnippet
-     {:snippet-id    (:id snippet)
-      :parsed-query  (params.parse/parse (:content snippet))
-      :param->value  (query->params-map  {:template-tags (:template_tags snippet)
+      {:snippet-id   (:id snippet)
+       ;; parse the content of snippet so that we could substitute template-tags inside snippet
+       :parsed-query (params.parse/parse (:content snippet))
+       :param->value (query->params-map  {:template-tags (:template_tags snippet)
                                           :parameters    params})})))
 
 ;;; Non-FieldFilter Params (e.g. WHERE x = {{x}})

@@ -4,7 +4,7 @@
             [metabase.driver.common.parameters :as params]
             [metabase.driver.common.parameters.parse :as params.parse]
             [metabase.driver.common.parameters.values :as params.values]
-            [metabase.models :refer [Card Collection Field NativeQuerySnippet]]
+            [metabase.models :refer [Card Collection NativeQuerySnippet]]
             [metabase.models.permissions :as perms]
             [metabase.models.permissions-group :as perms-group]
             [metabase.query-processor :as qp]
@@ -427,41 +427,43 @@
               (is (= expected
                      (query->params-map (query-with-snippet [] :snippet-id snippet-id, :snippet-name "Old Name"))))))))
 
-      #_(testing "snippet with params"
-          (mt/with-temp NativeQuerySnippet [{snippet-id :id}
-                                            {:name          "expensive-venues"
-                                             :content       "venues WHERE name = {{name}} and {{price}}"
-                                             :template_tags {"price" {:dimension    ["field" (mt/id :venues :price) nil]
-                                                                      :display-name "Price"
-                                                                      :id           "random-id-1"
-                                                                      :name         "price"
-                                                                      :type         "dimension"
-                                                                      :widget-type  "number/="}
-                                                             "name"  {:display-name "Name"
-                                                                      :id           "random-id-2"
-                                                                      :name         "name"
-                                                                      :type         "text"}}}]
-            (let [params         [{:id     "ramdom-id-1",
-                                   :target [:variable [:template-tag "name"]],
-                                   :type   :text,
-                                   :value  "The Apple Pan"}
-                                  {:id     "random-id-2",
-                                   :target [:variable [:template-tag "price"]],
-                                   :type   :category,
-                                   :value  [3]}]
-                  result         (query->params-map (query-with-snippet params :snippet-id snippet-id))
-                  parsed-snippet (get result "expensive-venues")]
-              (is (= ["venues WHERE name = " (param "name") " and " (param "price")] (:parsed-query parsed-snippet)))
-              (is (= snippet-id (:snippet-id parsed-snippet)))
-              (is (= (Field (mt/id :venues :price)) (:field (get (:param->value parsed-snippet) "price"))))))))))
-
-
-;(is (schema= {"expensive-venues" (params/map->ParsedQuerySnippet
-;                                              {:param->value {"name" "The Apple Pan"
-;                                                              "price" {:field (Field (mt/id :venues :price))
-;                                                                       :value params/no-value}}
-;                                               :parsed-query
-;                                               :snippet-id   snippet-id})}))
+      (testing "snippet with params"
+        (mt/with-temp NativeQuerySnippet [{snippet-id :id}
+                                          {:name          "expensive-venues"
+                                           :content       "venues WHERE name = {{name}} and {{price}}"
+                                           :template_tags {"price" {:dimension    ["field" (mt/id :venues :price) nil]
+                                                                    :display-name "Price"
+                                                                    :id           "random-id-1"
+                                                                    :name         "price"
+                                                                    :type         "dimension"
+                                                                    :widget-type  "number/="}
+                                                           "name"  {:display-name "Name"
+                                                                    :id           "random-id-2"
+                                                                    :name         "name"
+                                                                    :type         "text"}}}]
+          (let [params         [{:id     "ramdom-id-1",
+                                 :target [:variable [:template-tag "name"]],
+                                 :type   :text,
+                                 :value  "The Apple Pan"}
+                                {:id     "random-id-2",
+                                 :target [:dimension [:template-tag "price"]],
+                                 :type   :string/=,
+                                 :value  [3]}]
+                result         (query->params-map (query-with-snippet params :snippet-id snippet-id))
+                parsed-snippet (get result "expensive-venues")]
+            (is (= snippet-id (:snippet-id parsed-snippet)))
+            (is (= ["venues WHERE name = " (param "name") " and " (param "price")]
+                   (:parsed-query parsed-snippet)))
+            (testing "FieldFilter parameter should have a field and value keys"
+              (is (= (mt/id :venues :price)
+                     (get-in parsed-snippet [:param->value "price" :field :id])))
+              (is (= {:id    "random-id-2"
+                      :type  :string/=
+                      :value [3]}
+                     (get-in parsed-snippet [:param->value "price" :value]))))
+            (testing "variable parameter should have value is the value of parameter"
+              (is (= "The Apple Pan"
+                     (get-in parsed-snippet [:param->value "name"]))))))))))
 
 (deftest invalid-param-test
   (testing "Should throw an Exception if we try to pass with a `:type` we don't understand"
