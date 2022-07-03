@@ -27,7 +27,7 @@
            java.text.NumberFormat
            java.util.UUID
            [metabase.driver.common.parameters CommaSeparatedNumbers FieldFilter
-            MultipleValues ReferencedCardQuery ParsedQuerySnippet]))
+            MultipleValues ParsedQuerySnippet ReferencedCardQuery]))
 
 (defmulti ^:private parse-tag
   "Parse a tag by its `:type`, returning an appropriate record type such as

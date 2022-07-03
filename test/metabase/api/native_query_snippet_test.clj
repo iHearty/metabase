@@ -235,24 +235,24 @@
                                                                             :name         "category"
                                                                             :type         "not-a-type"
                                                                             :widget-type  "string/="}}}))
-        (testing "update type sucessfully"
-          (is (= {:category {:default nil,
-                             :display-name "Category",
-                             :id "random-id-2"
-                             :name "category"
-                             :type "text"}}
-                 (:template_tags (mt/user-http-request :crowberto :put 200 (snippet-url snippet-id)
-                                                       {:template_tags {"category" {:default      nil
-                                                                                    :id           "random-id-2"
-                                                                                    :display-name "Category"
-                                                                                    :name         "category"
-                                                                                    :type         "text"}}})))))))))
-
-
-
-
-
-(comment
-  (db/select NativeQuerySnippet)
- (db/select NativeQuerySnippet :name "A snippet with param"))
-
+        (testing "update should not allow mismatch template name"
+          (mt/user-http-request :crowberto :put 400 (snippet-url snippet-id)
+                                {:template_tags {"category" {:default      nil
+                                                             :dimension    ["field" 1 nil]
+                                                             :id           "random-id-2"
+                                                             :display-name "Category"
+                                                             :name         "not-a-template-tag"
+                                                             :type         "not-a-type"
+                                                             :widget-type  "string/="}}}))
+       (testing "update type sucessfully"
+         (is (= {:category {:default nil,
+                            :display-name "Category",
+                            :id "random-id-2"
+                            :name "category"
+                            :type "text"}}
+                (:template_tags (mt/user-http-request :crowberto :put 200 (snippet-url snippet-id)
+                                                      {:template_tags {"category" {:default      nil
+                                                                                   :id           "random-id-2"
+                                                                                   :display-name "Category"
+                                                                                   :name         "category"
+                                                                                   :type         "text"}}})))))))))

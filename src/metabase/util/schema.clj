@@ -2,7 +2,6 @@
   "Various schemas that are useful throughout the app."
   (:refer-clojure :exclude [distinct])
   (:require [cheshire.core :as json]
-            [clojure.core :as core]
             [clojure.string :as str]
             [clojure.walk :as walk]
             [medley.core :as m]
@@ -362,7 +361,7 @@
                                         s/Keyword                      s/Any}})
 
 (def TemplateTags
-  "Schema for a valid Template tags"
+  "Schema for a valid Template tags."
   (with-api-error-message
     (s/constrained
       TemplateTagSchema
