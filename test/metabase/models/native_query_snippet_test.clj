@@ -84,9 +84,6 @@
                       :type         :text}}
             (db/select-one-field :template_tags NativeQuerySnippet :id snippet-id))))))
 
-
-
-
 (deftest identity-hash-test
   (testing "Native query snippet hashes are composed of the name and the collection's hash"
     (mt/with-temp* [Collection         [coll    {:name "field-db" :namespace :snippets :location "/"}]

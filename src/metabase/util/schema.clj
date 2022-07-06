@@ -352,7 +352,7 @@
     (deferred-tru "parameter_mapping must be a map with :parameter_id and :target keys")))
 
 (def ^:private TemplateTagSchema
-  ;; For the exact schema, check [[metabase.mbql.schema/TemplateTagMap]]
+  ;; For the full schema that we use in MBQL, check [[metabase.mbql.schema/TemplateTagMap]]
   {(s/either NonBlankString s/Keyword) {:id                            NonBlankString
                                         :name                          NonBlankString
                                         :type                          (apply s/enum (map name mbql.s/template-tag-types))

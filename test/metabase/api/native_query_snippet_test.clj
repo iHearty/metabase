@@ -242,7 +242,7 @@
                                                              :id           "random-id-2"
                                                              :display-name "Category"
                                                              :name         "not-a-template-tag"
-                                                             :type         "not-a-type"
+                                                             :type         "dimension"
                                                              :widget-type  "string/="}}}))
        (testing "update type sucessfully"
          (is (= {:category {:default nil,

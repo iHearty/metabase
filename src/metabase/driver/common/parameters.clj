@@ -45,13 +45,13 @@
   (instance? ReferencedCardQuery x))
 
 ;; `ParsedQuerySnippet` is a parsed representation of the content in `NativeQuerySnippet`.
-;; It is to be used as an intermediate state for subsitute parameter in Snippet.
+;; It is to be used as an intermediate state when subsituting parameter in a Snippet.
 ;;
 ;; `snippet-id` is the integer ID of the row in the application DB from where the snippet content is loaded.
 ;;
 ;; `parsed-query` is an array we got from parsing the raw query of the snippet
 ;;
-;; `param->value` is a map with keys are template-tag that found in the raw query
+;; `param->value` is a map with with template tags parsed from the raw query as keys
 (p.types/defrecord+ ParsedQuerySnippet [snippet-id parsed-query param->value]
   pretty/PrettyPrintable
   (pretty [this]
