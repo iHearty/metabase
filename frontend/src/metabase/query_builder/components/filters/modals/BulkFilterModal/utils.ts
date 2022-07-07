@@ -1,5 +1,6 @@
-import StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
-import Filter from "metabase-lib/lib/queries/structured/Filter";
+import type StructuredQuery from "metabase-lib/lib/queries/StructuredQuery";
+import type Filter from "metabase-lib/lib/queries/structured/Filter";
+import type Dimension from "metabase-lib/lib/Dimension";
 
 // fix between filters with missing or misordered arguments
 export function fixBetweens(query: StructuredQuery): StructuredQuery {
@@ -62,3 +63,9 @@ export const hasBackwardsArguments = (filter: Filter) => {
   const [lowerArgument, upperArgument] = filter.arguments();
   return lowerArgument > upperArgument;
 };
+
+export const searchByDimensionName = (
+  dimension: Dimension,
+  searchQuery: string,
+): boolean =>
+  dimension?.displayName()?.toLowerCase()?.includes(searchQuery?.toLowerCase());

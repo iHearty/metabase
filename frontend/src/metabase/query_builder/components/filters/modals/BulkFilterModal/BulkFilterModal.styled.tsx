@@ -19,6 +19,7 @@ export const ModalHeader = styled.div`
 
 export const ModalBody = styled.div`
   overflow-y: auto;
+  height: 65vh;
 `;
 
 export const ModalFooter = styled.div`

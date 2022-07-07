@@ -3,13 +3,16 @@ import { t } from "ttag";
 import Filter from "metabase-lib/lib/queries/structured/Filter";
 import StructuredQuery, {
   FilterSection,
+  DimensionOption,
 } from "metabase-lib/lib/queries/StructuredQuery";
+
 import Question from "metabase-lib/lib/Question";
 import Button from "metabase/core/components/Button";
 import Tab from "metabase/core/components/Tab";
 import TabContent from "metabase/core/components/TabContent";
 import Icon from "metabase/components/Icon";
 import BulkFilterList from "../BulkFilterList";
+import TextInput from "metabase/components/TextInput";
 import {
   ModalBody,
   ModalCloseButton,
@@ -22,7 +25,7 @@ import {
   ModalTitle,
 } from "./BulkFilterModal.styled";
 
-import { fixBetweens } from "./utils";
+import { fixBetweens, searchByDimensionName } from "./utils";
 
 export interface BulkFilterModalProps {
   question: Question;
@@ -36,6 +39,8 @@ const BulkFilterModal = ({
   const [query, setQuery] = useState(getQuery(question));
   const [isChanged, setIsChanged] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const filters = useMemo(() => {
     return query.topLevelFilters();
   }, [query]);
@@ -43,6 +48,20 @@ const BulkFilterModal = ({
   const sections = useMemo(() => {
     return query.topLevelFilterFieldOptionSections(null, 2, true);
   }, [query]);
+
+  const searchItems = useMemo(() => {
+    console.log({ searchQuery });
+    if (searchQuery === "") {
+      return null;
+    }
+
+    return sections
+      .map(s => s.items)
+      .flat()
+      .filter((option: DimensionOption) =>
+        searchByDimensionName(option.dimension, searchQuery),
+      );
+  }, [searchQuery, sections]);
 
   const handleAddFilter = useCallback((filter: Filter) => {
     setQuery(filter.add());
@@ -73,19 +92,23 @@ const BulkFilterModal = ({
     onClose?.();
   }, [query, onClose]);
 
+  console.log(sections);
+
   return (
     <ModalRoot>
       <ModalHeader>
         <ModalTitle>{getTitle(question, query)}</ModalTitle>
+        <FieldSearch value={searchQuery} onChange={setSearchQuery} />
         <ModalCloseButton onClick={onClose}>
           <Icon name="close" />
         </ModalCloseButton>
       </ModalHeader>
-      {sections.length === 1 ? (
+      {sections.length === 1 || searchItems ? (
         <BulkFilterModalSection
           query={query}
           filters={filters}
-          section={sections[0]}
+          section={searchItems ? { items: searchItems } : sections[0]} // FIXME
+          isSearch={!!searchItems}
           onAddFilter={handleAddFilter}
           onChangeFilter={handleChangeFilter}
           onRemoveFilter={handleRemoveFilter}
@@ -119,6 +142,7 @@ interface BulkFilterModalSectionProps {
   query: StructuredQuery;
   filters: Filter[];
   section: FilterSection;
+  isSearch?: boolean;
   onAddFilter: (filter: Filter) => void;
   onChangeFilter: (filter: Filter, newFilter: Filter) => void;
   onRemoveFilter: (filter: Filter) => void;
@@ -129,6 +153,7 @@ const BulkFilterModalSection = ({
   query,
   filters,
   section,
+  isSearch,
   onAddFilter,
   onChangeFilter,
   onRemoveFilter,
@@ -182,10 +207,10 @@ const BulkFilterModalSectionList = ({
       <ModalDivider />
       {sections.map((section, index) => (
         <ModalTabPanel key={index} value={index}>
-          <BulkFilterList
+          <BulkFilterModalSection
             query={query}
             filters={filters}
-            options={section.items}
+            section={section}
             onAddFilter={onAddFilter}
             onChangeFilter={onChangeFilter}
             onRemoveFilter={onRemoveFilter}
@@ -217,6 +242,28 @@ const getTitle = (question: Question, query: StructuredQuery) => {
   } else {
     return t`Filter`;
   }
+};
+
+const FieldSearch = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}): JSX.Element => {
+  return (
+    <div style={{ marginRight: 20 }}>
+      <TextInput
+        hasClearButton
+        placeholder={t`Find a field`}
+        value={value}
+        onChange={onChange}
+        padding="sm"
+        borderRadius="md"
+        icon={<Icon name="search" size={16} />}
+      />
+    </div>
+  );
 };
 
 export default BulkFilterModal;

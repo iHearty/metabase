@@ -8,7 +8,9 @@ import StructuredQuery, {
   isSegmentOption,
 } from "metabase-lib/lib/queries/StructuredQuery";
 import Dimension from "metabase-lib/lib/Dimension";
-import { ModalDivider } from "../BulkFilterModal/BulkFilterModal.styled";
+import EmptyState from "metabase/components/EmptyState";
+import NoResults from "assets/img/no_results.svg";
+
 import Filter from "metabase-lib/lib/queries/structured/Filter";
 import { BulkFilterItem } from "../BulkFilterItem";
 import { SegmentFilterSelect } from "../BulkFilterSelect";
@@ -23,6 +25,7 @@ import { sortDimensions } from "./utils";
 export interface BulkFilterListProps {
   query: StructuredQuery;
   filters: Filter[];
+  isSearch?: boolean;
   options: (DimensionOption | SegmentOption)[];
   onAddFilter: (filter: Filter) => void;
   onChangeFilter: (filter: Filter, newFilter: Filter) => void;
@@ -34,6 +37,7 @@ const BulkFilterList = ({
   query,
   filters,
   options,
+  isSearch,
   onAddFilter,
   onChangeFilter,
   onRemoveFilter,
@@ -62,6 +66,7 @@ const BulkFilterList = ({
         <BulkFilterListItem
           key={index}
           query={query}
+          isSearch={isSearch}
           filters={filters}
           dimension={dimension}
           onAddFilter={onAddFilter}
@@ -69,6 +74,12 @@ const BulkFilterList = ({
           onRemoveFilter={onRemoveFilter}
         />
       ))}
+      {!segments.length && !dimensions.length && (
+        <EmptyState
+          message={t`Didn't find anything`}
+          illustrationElement={<img src={NoResults} />}
+        />
+      )}
     </ListRoot>
   );
 };
@@ -76,6 +87,7 @@ const BulkFilterList = ({
 interface BulkFilterListItemProps {
   query: StructuredQuery;
   filters: Filter[];
+  isSearch?: boolean;
   dimension: Dimension;
   onAddFilter: (filter: Filter) => void;
   onChangeFilter: (filter: Filter, newFilter: Filter) => void;
@@ -85,6 +97,7 @@ interface BulkFilterListItemProps {
 const BulkFilterListItem = ({
   query,
   filters,
+  isSearch,
   dimension,
   onAddFilter,
   onChangeFilter,
@@ -109,6 +122,7 @@ const BulkFilterListItem = ({
           <BulkFilterItem
             key={index}
             query={query}
+            isSearch={isSearch}
             filter={filter}
             dimension={dimension}
             onAddFilter={onAddFilter}
