@@ -28,6 +28,8 @@ import { getIn } from "icepick";
 
 import { isID, isFK } from "metabase/lib/schema_metadata";
 
+import Pagination from "./Pagination";
+
 @ExplicitSize({
   refreshMode: props =>
     props.isDashboard && !props.isEditing ? "debounce" : "throttle",
@@ -137,6 +139,8 @@ export default class TableSimple extends Component {
     } else {
       paginateMessage = t`Rows ${start + 1}-${end + 1} of ${rows.length}`;
     }
+
+    const onPageClick = p => this.setState({ page: p });
 
     return (
       <div className={cx(this.props.className, "relative flex flex-column")}>
@@ -288,10 +292,24 @@ export default class TableSimple extends Component {
             </table>
           </div>
         </div>
-        {pageSize < rows.length ? (
+        {pageSize < rows.length && (
           <div
             ref={this.footerRef}
-            className="p1 flex flex-no-shrink flex-align-right fullscreen-normal-text fullscreen-night-text"
+            className="a11 p1 flex flex-no-shrink flex-align-right align-center fullscreen-normal-text fullscreen-night-text"
+          >
+            <span>{paginateMessage}</span>
+            <Pagination
+              total={rows.length}
+              page={page + 1}
+              pageSize={pageSize}
+              onPageClick={onPageClick}
+            />
+          </div>
+        )}
+        {/* {pageSize < rows.length ? (
+          <div
+            ref={this.footerRef}
+            className="a11 p1 flex flex-no-shrink flex-align-right fullscreen-normal-text fullscreen-night-text"
           >
             <span className="text-bold">{paginateMessage}</span>
             <span
@@ -311,7 +329,7 @@ export default class TableSimple extends Component {
               <Icon name="triangle_right" size={10} />
             </span>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     );
   }

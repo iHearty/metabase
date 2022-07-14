@@ -10,6 +10,7 @@ import { getValuePopulatedParameters } from "metabase/parameters/utils/parameter
 
 import TitleAndDescription from "metabase/components/TitleAndDescription";
 import SyncedParametersList from "metabase/parameters/components/SyncedParametersList/SyncedParametersList";
+import { getVisibleParameters } from "metabase/parameters/utils/ui";
 import LogoBadge from "./LogoBadge";
 
 import cx from "classnames";
@@ -45,6 +46,7 @@ export default class EmbedFrame extends Component {
     const { innerScroll } = this.state;
 
     const showFooter = !MetabaseSettings.hideEmbedBranding() || actionButtons;
+    const forceHideFooter = true;
 
     const { bordered, titled, theme, hide_parameters } = {
       ...DEFAULT_OPTIONS,
@@ -52,6 +54,7 @@ export default class EmbedFrame extends Component {
     };
 
     const name = titled ? this.props.name : null;
+    const visibleParameters = getVisibleParameters(parameters, hide_parameters);
 
     return (
       <div
@@ -66,7 +69,8 @@ export default class EmbedFrame extends Component {
             "scroll-y": innerScroll,
           })}
         >
-          {name || (parameters && parameters.length > 0) ? (
+          {name ||
+          (visibleParameters.length && parameters && parameters.length > 0) ? (
             <div className="EmbedFrame-header flex align-center p1 sm-p2 lg-p3">
               {name && (
                 <TitleAndDescription title={name} description={description} />
@@ -91,7 +95,7 @@ export default class EmbedFrame extends Component {
             {children}
           </div>
         </div>
-        {showFooter && (
+        {!forceHideFooter && showFooter && (
           <div className="EmbedFrame-footer p1 md-p2 lg-p3 border-top flex-no-shrink flex align-center">
             {!MetabaseSettings.hideEmbedBranding() && (
               <LogoBadge dark={theme} />
